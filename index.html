@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>📱 Mobile Number Info Checker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: #fff;
+    }
+
+    .container {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: #60a5fa;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0 20px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    input::placeholder {
+      color: #ccc;
+    }
+
+    button {
+      padding: 12px 24px;
+      background: linear-gradient(to right, #38bdf8, #2563eb);
+      border: none;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(to right, #2563eb, #38bdf8);
+    }
+
+    .info {
+      margin-top: 20px;
+      text-align: left;
+      font-size: 15px;
+      padding: 15px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      line-height: 1.6;
+    }
+
+    .error {
+      color: #f87171;
+      margin-top: 15px;
+    }
+
+    .info i {
+      color: #60a5fa;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><i class="fa-solid fa-mobile-screen-button"></i> Mobile Tracker</h1>
+    <input type="text" id="number" placeholder="Enter number with country code (e.g. +14158586273)">
+    <button onclick="checkNumber()">Check Info</button>
+    <div id="result" class="info"></div>
+  </div>
+
+  <script>
+    async function checkNumber() {
+      const number = document.getElementById('number').value.trim();
+      const access_key = 'ee73ed08ce9e6eb9f5c01d3a2539a4d4';
+      const url = `http://apilayer.net/api/validate?access_key=${access_key}&number=${encodeURIComponent(number)}&format=1`;
+
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = "⏳ Checking...";
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.valid) {
+          resultDiv.innerHTML = `
+            <p><i class="fa-solid fa-check-circle"></i> <strong>Valid:</strong> ${data.valid}</p>
+            <p><i class="fa-solid fa-earth-americas"></i> <strong>Country:</strong> ${data.country_name} (${data.country_code})</p>
+            <p><i class="fa-solid fa-location-dot"></i> <strong>Location:</strong> ${data.location || 'Unknown'}</p>
+            <p><i class="fa-solid fa-wifi"></i> <strong>Carrier:</strong> ${data.carrier || 'N/A'}</p>
+            <p><i class="fa-solid fa-phone"></i> <strong>Line Type:</strong> ${data.line_type || 'N/A'}</p>
+          `;
+        } else {
+          resultDiv.innerHTML = `<span class="error">❌ Invalid number. Please check the format.</span>`;
+        }
+      } catch (error) {
+        console.error(error);
+        resultDiv.innerHTML = `<span class="error">⚠️ Error fetching data. Please try again later.</span>`;
+      }
+    }
+  </script>
+</body>
+</html>
